@@ -36,3 +36,19 @@ workflows:
           validate: true
           checkout: false
           attach-workspace: true
+
+examples:
+  install-envsubst:
+    description: |
+      Install envsubst command
+    usage:
+      orbs:
+        envsubst: sawadashota/envsubst@volatile
+      version: 2.1
+      job:
+        echo-version:
+          image:
+            - docker: circleci/python:3.8
+          steps:
+            - envsubst/install
+            - run: envsubst --version
