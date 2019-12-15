@@ -2,14 +2,20 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@8.27.6
-  circleci-cli: circleci/circleci-cli@0.1.6
+  # For test
   envsubst-alpha: sawadashota/envsubst@dev:alpha
 
 release_filters: &release_filters
-  tags:
-    only: /.*/
   branches:
     ignore: /.*/
+  tags:
+    only: /[0-9]+\.[0-9]+\.[0-9]+/
+
+integration_dev_filters: &integration_dev_filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /integration-.*/
 
 workflows:
   version: 2
@@ -28,12 +34,25 @@ workflows:
           validate: true
           checkout: false
           attach-workspace: true
+      # Push `integration` tag to VCS and kick `integration_dev` workflow
+      # because it's impossible to publish and use the orb in a same workflow.
+      # https://circleci.com/orbs/registry/orb/circleci/orb-tools?version=8.27.5#jobs-trigger-integration-workflow
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-workflow-dev
           context: circleci
           requires: [publish-dev]
+
+  # Test orb sawadashota/envsubst@dev:alpha
+  # sawadashota/envsubst@dev:alpha is published in `dev` workflow
+  integration_dev:
+    jobs:
+      - orb-tools/pack:
+          name: pack-integration_dev
+          filters: *integration_dev_filters
       - orb-tools/test-in-builds:
-          requires: [trigger-integration-workflow-dev]
+          name: test-in-builds-integration_dev
+          filters: *integration_dev_filters
+          requires: [pack-integration_dev]
           orb-name: envsubst-alpha
           attach-workspace: true
           test-steps:
