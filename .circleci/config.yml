@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   orb-tools: circleci/orb-tools@8.27.6
   circleci-cli: circleci/circleci-cli@0.1.6
-  envsubst-alpha: sawadashota/envsubst@dev:alpha
+#  envsubst-alpha: sawadashota/envsubst@dev:alpha
 
 release_filters: &release_filters
   tags:
