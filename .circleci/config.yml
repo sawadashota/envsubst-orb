@@ -14,7 +14,7 @@ workflows:
           context: circleci
           requires:
             - orb-tools/pack
-          orb-name: envsubst-alpha
+          orb-name: sawadashota/envsubst
           publish-token-variable: CIRCLE_TOKEN
           validate: true
           checkout: false
@@ -22,7 +22,8 @@ workflows:
       - orb-tools/test-in-builds:
           requires:
             - orb-tools/pack
-          orb-name: envsubst-alpha
+          orb-name: sawadashota/envsubst
+          attach-workspace: true
           test-steps:
             - envsubst-alpha/install
             - run: envsubst --version
