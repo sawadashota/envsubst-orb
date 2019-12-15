@@ -41,7 +41,7 @@ workflows:
           name: trigger-integration-workflow-dev
           context: circleci
           requires: [publish-dev]
-          cleanup-tags: true
+          use-git-diff: false
           ssh-fingerprints: bf:89:4f:b9:b3:3e:c8:50:72:3d:87:04:8d:0e:2b:46
 
   # Test orb sawadashota/envsubst@dev:alpha
@@ -62,6 +62,9 @@ workflows:
             - run:
                 name: Assert installed directory
                 command: which envsubst && test $(which envsubst) = "/usr/local/bin/envsubst"
+      - clean_up_tags:
+          filters: *integration_dev_filters
+          requires: [test-in-builds-integration_dev]
 
   production:
     jobs:
@@ -78,3 +81,37 @@ workflows:
           validate: true
           checkout: false
           attach-workspace: true
+
+jobs:
+  clean_up_tags:
+    parameters:
+      cleanup-tags-pattern:
+        default: integration*
+        description: >
+          Before proceeding with pushing a tag to trigger an integration testing
+          workflow, optionally clean up all older tags that meet a given `git tag
+          -l` wildcard pattern. Defaults to a wildcard pattern including any tags
+          starting with the string `integration`. (Default is intended for use when
+          `tag` parameter is set to `master`.)
+        type: string
+    image:
+      - docker: circleci/python:3.8
+    steps:
+      - checkout
+      - run:
+          name: cleanup old remote tags
+          command: |
+            # delete local tags
+
+            git tag -d $(git tag -l "<<parameters.cleanup-tags-pattern>>")
+
+
+            # fetch remote tags
+
+            git fetch
+
+
+            # delete remote tag
+
+            git push origin --delete $(git tag -l git tag -l
+            "<<parameters.cleanup-tags-pattern>>") || true
