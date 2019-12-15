@@ -11,7 +11,7 @@ workflows:
       - orb-tools/publish-dev:
           context: circleci
           requires:
-            - pack-orb
+            - orb-tools/pack
           orb-name: sawadashota/envsubst
           publish-token-variable: CIRCLE_TOKEN
           validate: true
@@ -30,7 +30,7 @@ workflows:
           filters: *release_filter
           context: circleci
           requires:
-            - pack-orb
+            - orb-tools/pack
           orb-ref: sawadashota/envsubst@${CIRCLE_TAG}
           publish-token-variable: CIRCLE_TOKEN
           validate: true
