@@ -1,4 +1,4 @@
-envsubst-orb
+envsubst-orb [![CircleCI](https://circleci.com/gh/sawadashota/envsubst-orb/tree/master.svg?style=svg)](https://circleci.com/gh/sawadashota/envsubst-orb/tree/master)
 ===
 
 CircleCI orb to use envsubst command
