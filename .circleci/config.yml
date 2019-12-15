@@ -1,0 +1,38 @@
+version: 2.1
+
+orbs:
+  orb-tools: circleci/orb-tools@8.27.6
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - orb-tools/pack
+      - orb-tools/publish-dev:
+          context: circleci
+          requires:
+            - pack-orb
+          orb-name: sawadashota/envsubst
+          publish-token-variable: CIRCLE_TOKEN
+          validate: true
+          checkout: false
+          attach-workspace: true
+
+  release:
+    jobs:
+      - orb-tools/pack:
+          filters: &release_filter
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
+      - orb-tools/publish:
+          filters: *release_filter
+          context: circleci
+          requires:
+            - pack-orb
+          orb-ref: sawadashota/envsubst@${CIRCLE_TAG}
+          publish-token-variable: CIRCLE_TOKEN
+          validate: true
+          checkout: false
+          attach-workspace: true
