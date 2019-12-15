@@ -26,3 +26,19 @@ commands:
             curl -L https://github.com/a8m/envsubst/releases/download/<< parameters.version >>/envsubst-`uname -s`-`uname -m` -o envsubst
             chmod +x envsubst
             $SUDO mv envsubst << parameters.install-dir >>
+
+examples:
+  install-envsubst:
+    description: |
+      Install envsubst command
+    usage:
+      orbs:
+        envsubst: sawadashota/envsubst@volatile
+      version: 2.1
+      job:
+        echo-version:
+          image:
+            - docker: circleci/python:3.8
+          steps:
+            - envsubst/install
+            - run: envsubst --version
