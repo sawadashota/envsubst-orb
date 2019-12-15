@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   orb-tools: circleci/orb-tools@8.27.6
   circleci-cli: circleci/circleci-cli@0.1.6
-#  envsubst-alpha: sawadashota/envsubst@dev:alpha
+  envsubst-alpha: sawadashota/envsubst@dev:alpha
 
 release_filters: &release_filters
   tags:
@@ -15,6 +15,7 @@ workflows:
   version: 2
   test:
     jobs:
+      - orb-tools/lint
       - orb-tools/pack
       - orb-tools/publish-dev:
           context: circleci
@@ -25,6 +26,7 @@ workflows:
           validate: true
           checkout: false
           attach-workspace: true
+      - orb-tools/trigger-integration-workflow
       - orb-tools/test-in-builds:
           requires:
             - orb-tools/publish-dev
