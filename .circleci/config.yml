@@ -26,7 +26,11 @@ workflows:
           attach-workspace: true
           test-steps:
             - envsubst-alpha/install
-            - run: test $(which envsubst) = "/usr/local/bin/envsubst"
+            - run:
+                name: Assert installed directory
+                command: |
+                  which envsubst
+                  test $(which envsubst) = "/usr/local/bin/envsubst"
 
   release:
     jobs:
