@@ -13,41 +13,44 @@ release_filters: &release_filters
 
 workflows:
   version: 2
-  test:
+  dev:
     jobs:
-      - orb-tools/lint
-      - orb-tools/pack
+      - orb-tools/lint:
+          name: lint-dev
+      - orb-tools/pack:
+          name: pack-dev
       - orb-tools/publish-dev:
+          name: publish-dev
           context: circleci
-          requires:
-            - orb-tools/pack
+          requires: [pack-dev]
           orb-name: sawadashota/envsubst
           publish-token-variable: CIRCLE_TOKEN
           validate: true
           checkout: false
           attach-workspace: true
-      - orb-tools/trigger-integration-workflow
+      - orb-tools/trigger-integration-workflow:
+          name: trigger-integration-workflow-dev
+          requires: [publish-dev]
       - orb-tools/test-in-builds:
-          requires:
-            - orb-tools/publish-dev
+          requires: [trigger-integration-workflow-dev]
           orb-name: envsubst-alpha
           attach-workspace: true
           test-steps:
             - envsubst-alpha/install
             - run:
                 name: Assert installed directory
-                command: |
-                  which envsubst && test $(which envsubst) = "/usr/local/bin/envsubst"
+                command: which envsubst && test $(which envsubst) = "/usr/local/bin/envsubst"
 
-  release:
+  production:
     jobs:
       - orb-tools/pack:
+          name: pack-production
           filters: *release_filters
       - orb-tools/publish:
+          name: publish-production
           filters: *release_filters
           context: circleci
-          requires:
-            - orb-tools/pack
+          requires: [pack-production]
           orb-ref: sawadashota/envsubst@${CIRCLE_TAG}
           publish-token-variable: CIRCLE_TOKEN
           validate: true
