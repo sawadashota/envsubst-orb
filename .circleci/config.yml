@@ -5,6 +5,12 @@ orbs:
   circleci-cli: circleci/circleci-cli@0.1.6
   envsubst-alpha: sawadashota/envsubst@dev:alpha
 
+release_filters: &release_filters
+  tags:
+    only: /.*/
+  branches:
+    ignore: /.*/
+
 workflows:
   version: 2
   test:
@@ -29,19 +35,14 @@ workflows:
             - run:
                 name: Assert installed directory
                 command: |
-                  which envsubst
-                  test $(which envsubst) = "/usr/local/bin/envsubst"
+                  which envsubst && test $(which envsubst) = "/usr/local/bin/envsubst"
 
   release:
     jobs:
       - orb-tools/pack:
-          filters: &release_filter
-            tags:
-              only: /.*/
-            branches:
-              ignore: /.*/
+          filters: *release_filters
       - orb-tools/publish:
-          filters: *release_filter
+          filters: *release_filters
           context: circleci
           requires:
             - orb-tools/pack
