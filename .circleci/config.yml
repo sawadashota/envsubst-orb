@@ -94,8 +94,8 @@ jobs:
           starting with the string `integration`. (Default is intended for use when
           `tag` parameter is set to `master`.)
         type: string
-    image:
-      - docker: circleci/python:3.8
+    docker:
+      - image: circleci/python:3.8
     steps:
       - checkout
       - run:
