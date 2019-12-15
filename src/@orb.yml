@@ -16,7 +16,7 @@ commands:
       install-dir:
         description: Directory in which to install the envsubst command
         type: string
-        default: /usr/local/bin
+        default: /usr/bin
     steps:
       - run:
           name: Install envsubst
@@ -40,5 +40,6 @@ examples:
           image:
             - docker: circleci/python:3.8
           steps:
+            - checkout
             - envsubst/install
             - run: which envsubst
