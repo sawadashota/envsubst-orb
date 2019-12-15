@@ -65,6 +65,7 @@ workflows:
       - clean_up_tags:
           filters: *integration_dev_filters
           requires: [test-in-builds-integration_dev]
+          ssh-fingerprints: bf:89:4f:b9:b3:3e:c8:50:72:3d:87:04:8d:0e:2b:46
 
   production:
     jobs:
@@ -94,10 +95,24 @@ jobs:
           starting with the string `integration`. (Default is intended for use when
           `tag` parameter is set to `master`.)
         type: string
+    ssh-fingerprints:
+      default: ''
+      description: >
+        Fingerprints for SSH deploy key (add the public key as a read/write key on
+        GitHub; add the private key in CircleCI via SSH Permissions, with
+        github.com as Hostname). Used to push a git tag back to the project's
+        repository.
+      type: string
     docker:
       - image: cibuilds/base
     steps:
       - checkout
+      - when:
+          condition: <<parameters.ssh-fingerprints>>
+          steps:
+            - add_ssh_keys:
+                fingerprints:
+                  - <<parameters.ssh-fingerprints>>
       - run:
           name: cleanup old remote tags
           command: |
