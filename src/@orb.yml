@@ -1,0 +1,28 @@
+version: 2.1
+
+description: |
+  CircleCI orb to use envsubst command
+  https://github.com/sawadashota/envsubst-orb
+
+commands:
+  install:
+    parameters:
+      version:
+        description: >
+          Installing version of envsubst.
+          https://github.com/a8m/envsubst/releases
+        type: string
+        default: v1.1.0
+      install-dir:
+        description: Directory in which to install the envsubst command
+        type: string
+        default: /usr/local/bin
+    steps:
+      - run:
+          name: Install envsubst
+          command: |
+            if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+
+            curl -L https://github.com/a8m/envsubst/releases/download/<< parameters.version >>/envsubst-`uname -s`-`uname -m` -o envsubst
+            chmod +x envsubst
+            $SUDO mv envsubst << parameters.install-dir >>
