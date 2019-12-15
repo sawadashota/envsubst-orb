@@ -23,6 +23,7 @@ workflows:
           requires:
             - orb-tools/publish-dev
           orb-name: envsubst-alpha
+          attach-workspace: true
           test-steps:
             - envsubst-alpha/install
             - run: test $(which envsubst) = "/usr/local/bin/envsubst"
