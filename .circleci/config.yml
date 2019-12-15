@@ -1,0 +1,79 @@
+version: 2.1
+
+orbs:
+  orb-tools: circleci/orb-tools@8.27.6
+  # For test
+  envsubst-alpha: sawadashota/envsubst@dev:alpha
+
+release_filters: &release_filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /[0-9]+\.[0-9]+\.[0-9]+/
+
+integration_dev_filters: &integration_dev_filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /integration-.*/
+
+workflows:
+  version: 2
+  dev:
+    jobs:
+      - orb-tools/lint:
+          name: lint-dev
+      - orb-tools/pack:
+          name: pack-dev
+      - orb-tools/publish-dev:
+          name: publish-dev
+          context: circleci
+          requires: [pack-dev]
+          orb-name: sawadashota/envsubst
+          publish-token-variable: CIRCLE_TOKEN
+          validate: true
+          checkout: false
+          attach-workspace: true
+      # Push `integration` tag to VCS and kick `integration_dev` workflow
+      # because it's impossible to publish and use the orb in a same workflow.
+      # https://circleci.com/orbs/registry/orb/circleci/orb-tools?version=8.27.5#jobs-trigger-integration-workflow
+      - orb-tools/trigger-integration-workflow:
+          name: trigger-integration-workflow-dev
+          context: circleci
+          requires: [publish-dev]
+          ssh-fingerprints: bf:89:4f:b9:b3:3e:c8:50:72:3d:87:04:8d:0e:2b:46
+
+  # Test orb sawadashota/envsubst@dev:alpha
+  # sawadashota/envsubst@dev:alpha is published in `dev` workflow
+  integration_dev:
+    jobs:
+      - orb-tools/pack:
+          name: pack-integration_dev
+          filters: *integration_dev_filters
+      - orb-tools/test-in-builds:
+          name: test-in-builds-integration_dev
+          filters: *integration_dev_filters
+          requires: [pack-integration_dev]
+          orb-name: envsubst-alpha
+          attach-workspace: true
+          test-steps:
+            - envsubst-alpha/install
+            - run:
+                name: Assert installed directory
+                command: which envsubst && test $(which envsubst) = "/usr/local/bin/envsubst"
+
+  production:
+    jobs:
+      - orb-tools/pack:
+          name: pack-production
+          filters: *release_filters
+      - orb-tools/publish:
+          name: publish-production
+          filters: *release_filters
+          context: circleci
+          requires: [pack-production]
+          orb-ref: sawadashota/envsubst@${CIRCLE_TAG}
+          publish-token-variable: CIRCLE_TOKEN
+          validate: true
+          checkout: false
+          attach-workspace: true
