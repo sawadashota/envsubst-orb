@@ -95,23 +95,17 @@ jobs:
           `tag` parameter is set to `master`.)
         type: string
     docker:
-      - image: circleci/python:3.8
+      - image: cibuilds/base
     steps:
       - checkout
       - run:
           name: cleanup old remote tags
           command: |
             # delete local tags
-
             git tag -d $(git tag -l "<<parameters.cleanup-tags-pattern>>")
 
-
             # fetch remote tags
-
             git fetch
 
-
             # delete remote tag
-
-            git push origin --delete $(git tag -l git tag -l
-            "<<parameters.cleanup-tags-pattern>>") || true
+            git push origin --delete $(git tag -l git tag -l "<<parameters.cleanup-tags-pattern>>") || true
