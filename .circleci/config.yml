@@ -41,6 +41,7 @@ workflows:
           name: trigger-integration-workflow-dev
           context: circleci
           requires: [publish-dev]
+          cleanup-tags: true
           ssh-fingerprints: bf:89:4f:b9:b3:3e:c8:50:72:3d:87:04:8d:0e:2b:46
 
   # Test orb sawadashota/envsubst@dev:alpha
