@@ -21,7 +21,7 @@ workflows:
           attach-workspace: true
       - orb-tools/test-in-builds:
           requires:
-            - orb-tools-alpha/pack
+            - orb-tools/pack
           orb-name: envsubst-alpha
           test-steps:
             - envsubst-alpha/install
