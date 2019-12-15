@@ -22,7 +22,7 @@ workflows:
       - orb-tools/test-in-builds:
           requires:
             - orb-tools/pack
-          orb-name: sawadashota/envsubst
+          orb-name: envsubst-alpha
           attach-workspace: true
           test-steps:
             - envsubst-alpha/install
