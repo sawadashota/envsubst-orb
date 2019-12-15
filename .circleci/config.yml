@@ -2,6 +2,8 @@ version: 2.1
 
 orbs:
   orb-tools: circleci/orb-tools@8.27.6
+  circleci-cli: circleci/circleci-cli@0.1.6
+  envsubst-alpha: sawadashota/envsubst@dev:alpha
 
 workflows:
   version: 2
@@ -12,11 +14,18 @@ workflows:
           context: circleci
           requires:
             - orb-tools/pack
-          orb-name: sawadashota/envsubst
+          orb-name: envsubst-alpha
           publish-token-variable: CIRCLE_TOKEN
           validate: true
           checkout: false
           attach-workspace: true
+      - orb-tools/test-in-builds:
+          requires:
+            - orb-tools-alpha/pack
+          orb-name: envsubst-alpha
+          test-steps:
+            - envsubst-alpha/install
+            - run: envsubst --version
 
   release:
     jobs:
