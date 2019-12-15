@@ -27,7 +27,6 @@ workflows:
           name: pack-dev
       - orb-tools/publish-dev:
           name: publish-dev
-          context: circleci
           requires: [pack-dev]
           orb-name: sawadashota/envsubst
           publish-token-variable: CIRCLE_TOKEN
@@ -39,7 +38,6 @@ workflows:
       # https://circleci.com/orbs/registry/orb/circleci/orb-tools?version=8.27.5#jobs-trigger-integration-workflow
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-workflow-dev
-          context: circleci
           requires: [publish-dev]
           ssh-fingerprints: bf:89:4f:b9:b3:3e:c8:50:72:3d:87:04:8d:0e:2b:46
 
@@ -70,7 +68,6 @@ workflows:
       - orb-tools/publish:
           name: publish-production
           filters: *release_filters
-          context: circleci
           requires: [pack-production]
           orb-ref: sawadashota/envsubst@${CIRCLE_TAG}
           publish-token-variable: CIRCLE_TOKEN
