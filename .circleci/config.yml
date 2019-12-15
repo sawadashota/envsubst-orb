@@ -30,6 +30,7 @@ workflows:
           attach-workspace: true
       - orb-tools/trigger-integration-workflow:
           name: trigger-integration-workflow-dev
+          context: circleci
           requires: [publish-dev]
       - orb-tools/test-in-builds:
           requires: [trigger-integration-workflow-dev]
