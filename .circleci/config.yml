@@ -19,12 +19,6 @@ release_filters: &release_filters
   tags:
     only: /[0-9]+\.[0-9]+\.[0-9]+/
 
-integration_dev_filters: &integration_dev_filters
-  branches:
-    ignore: /.*/
-  tags:
-    only: /integration-.*/
-
 workflows:
   version: 2
   dev:
