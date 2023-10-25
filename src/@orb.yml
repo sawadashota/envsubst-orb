@@ -12,7 +12,7 @@ commands:
           Installing version of envsubst.
           https://github.com/a8m/envsubst/releases
         type: string
-        default: v1.1.0
+        default: v1.4.2
       install-dir:
         description: Directory in which to install the envsubst command
         type: string
@@ -23,7 +23,14 @@ commands:
           command: |
             if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
 
-            curl -L https://github.com/a8m/envsubst/releases/download/<< parameters.version >>/envsubst-`uname -s`-`uname -m` -o envsubst
+            ARCH=$(uname -m)
+            if [[ "$ARCH" == "aarch64" ]]; then
+              ARCH="arm64"
+            elseif [[ "$ARCH" == "amd64" ]]; then
+              ARCH="x86_64"
+            fi
+
+            curl -L https://github.com/a8m/envsubst/releases/download/<< parameters.version >>/envsubst-`uname -s`-$ARCH -o envsubst
             chmod +x envsubst
             $SUDO mv envsubst << parameters.install-dir >>
 
