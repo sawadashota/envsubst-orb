@@ -30,7 +30,13 @@ commands:
               ARCH="x86_64"
             fi
 
-            curl -L https://github.com/a8m/envsubst/releases/download/<< parameters.version >>/envsubst-`uname -s`-$ARCH -o envsubst
+            RES_CODE=$(curl -L https://github.com/a8m/envsubst/releases/download/<< parameters.version >>/envsubst-`uname -s`-$ARCH -o envsubst)
+
+            if [[ $RES_CODE -ge 400 ]]; then
+              echo "Error: Failed to download envsubst binary from https://github.com/a8m/envsubst/releases/download/<< parameters.version >>/envsubst-`uname -s`-$ARCH. Response code: $RES_CODE"
+              exit 1
+            fi
+            
             chmod +x envsubst
             $SUDO mv envsubst << parameters.install-dir >>
 
