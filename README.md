@@ -15,7 +15,7 @@ version: 2.1
 job:
   echo-version:
     image:
-      - docker: circleci/python:3.8
+      - docker: circleci/python:3.12
     steps:
       - envsubst/install
       - run: which envsubst

@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  orb-tools: circleci/orb-tools@9.0.0
+  orb-tools: circleci/orb-tools@12.0
   # For test
   envsubst-alpha: sawadashota/envsubst@dev:alpha
 
@@ -28,15 +28,13 @@ workflows:
           name: lint-dev
       - orb-tools/pack:
           name: pack-dev
-      - orb-tools/publish-dev:
+      - orb-tools/publish:
           name: publish-dev
           context: orb-publishing
           requires: [pack-dev]
-          orb-name: sawadashota/envsubst
-          publish-token-variable: CIRCLE_TOKEN
-          validate: true
+          orb_name: sawadashota/envsubst
           checkout: false
-          attach-workspace: true
+          vcs_type: <<pipeline.project.type>>
       - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-workflow-dev
           context: orb-publishing
@@ -69,7 +67,6 @@ workflows:
           context: orb-publishing
           requires: [pack-production]
           orb-ref: sawadashota/envsubst@${CIRCLE_TAG}
-          publish-token-variable: CIRCLE_TOKEN
-          validate: true
+          pub-type: production
           checkout: false
-          attach-workspace: true
+          vcs_type: <<pipeline.project.type>>
