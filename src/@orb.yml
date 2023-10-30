@@ -26,7 +26,7 @@ commands:
             ARCH=$(uname -m)
             if [[ "$ARCH" == "aarch64" ]]; then
               ARCH="arm64"
-            elseif [[ "$ARCH" == "amd64" ]]; then
+            elif [[ "$ARCH" == "amd64" ]]; then
               ARCH="x86_64"
             fi
 
